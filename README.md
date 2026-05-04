@@ -30,9 +30,9 @@ hybrid_30x30_NO_U_DOWN sonuçlarının makale ile karşılaştırılması
 ### Hiperparametreler
 | Parametre | Değer | Açıklama |
 |-----------|-------|----------|
-| alpha | 0.1 | Öğrenme hızı |
+| alpha | 0.01 | Öğrenme hızı |
 | gamma | 0.9 | İndirgeme faktörü |
-| epsilon | 0.1 | Başlangıç keşif oranı |
+| epsilon | 0.9 | Başlangıç keşif oranı |
 
 epsilon azalma 0.003
 
