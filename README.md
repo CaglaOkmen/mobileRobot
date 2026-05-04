@@ -4,9 +4,9 @@ Improved A* (küresel planlama) ve Q-Learning (dinamik engel kaçınma) birleşt
 Makaleden farklı ilerleyen kısımlar:
 - Farklı u rotasyonlarında doğru u tuzak doldurması hatalı olduğu görüldü. Bu sorun için VirtualGrid ile harita 4 yöne döndürülerek tuzak doldurması yapılmıştır.
 - Makalede init_memory_matrix hesaplama yükünü azaltmak için sadece 1 kere çalıştırılmaktadır. Her katman doldurma yapıldığında tuzak içine yönelimi önlemek içiin init_memory_matrix tekrar hesaplanmıştır.
-- Makalede engel mesafe kontrolü için geometrik (nokta-doğru) mesafe formülü kullanılmaktadır. Bu yaklaşımın grid yapısında köşelere takılma riski taşıdığı görüldüğünden, çok daha kesin sonuç veren hücre tabanlı ışın izleme (Amanatides-Woo) yöntemi kullanılmıştır. Ayrıca hybrid_30x30_U_DOWN test ortamı makaledeki figür 8 ile aynıdır ve makalede Inflection nodes 10 iken uygulanan kodda 15 olmuştur. Makaleye yakın sonuç alındığı içinde Amanatides-Woo yöntemi şeçilmiştir. Bu temel farkın A* algoritmasının izlediği yol seçiminin farklı olmasındandır.
+- Makalede engel mesafe kontrolü için geometrik (nokta-doğru) mesafe formülü kullanılmaktadır. Bu yaklaşımın grid yapısında köşelere takılma riski taşıdığı görüldüğünden, çok daha kesin sonuç veren hücre tabanlı ışın izleme (Amanatides-Woo) yöntemi kullanılmıştır. Ayrıca hybrid_30x30_NO_U_DOWN test ortamı makaledeki figür 8 ile aynıdır ve makalede Inflection nodes 10 iken uygulanan kodda 15 olmuştur. Makaleye yakın sonuç alındığı içinde Amanatides-Woo yöntemi şeçilmiştir. Bu temel farkın A* algoritmasının izlediği yol seçiminin farklı olmasındandır.
 
-hybrid_30x30_U_DOWN sonuçlarının makale ile karşılaştırılması 
+hybrid_30x30_NO_U_DOWN sonuçlarının makale ile karşılaştırılması 
 | Değerler | Makale | Uygulanan |
 |---------|-------|-------|
 |Searched nodes | 136 | 76 |
