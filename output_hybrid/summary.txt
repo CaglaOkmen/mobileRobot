@@ -1,0 +1,6 @@
+Hybrid Q-Astar: Evaluation Summary
+Total episodes (training): 3000
+Episodes per env         : 500
+Training time            : 7.1s
+Q-table size             : 749
+
