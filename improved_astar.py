@@ -137,8 +137,8 @@ def fill_u_traps(grid, ox, oy, start, goal, curr):
                     # Engele çarpıldı; bu satırda U-trap yok.
                     break
 
-                # ------ Step 2: P1 koşulu (sol+alt komşu duvar) ------
-                if vgrid.get(px - 1, py) == 1 and vgrid.get(px, py + 1) == 1:
+                # ------ Step 2: P1 kosulu (sol+alt komsu duvar ve sol-alt kose) ------
+                if vgrid.get(px - 1, py) == 1 and vgrid.get(px, py + 1) == 1 and vgrid.get(px - 1, py + 1) == 1:
                     # Filtre 1 - Sınır duvar:
                     lx, ly = vgrid.from_rot(px - 1, py)
                     bx, by = vgrid.from_rot(px,     py + 1)
@@ -156,6 +156,8 @@ def fill_u_traps(grid, ox, oy, start, goal, curr):
                         if vgrid.get(px - 1, y) != 1: break
                         if y - 1 < 0: break
                         if vgrid.get(px, y - 1) == 1:
+                            if vgrid.get(px - 1, y - 1) != 1:
+                                break  # Kose boslugu varsa tuzak tam kapali degildir
                             ux, uy = vgrid.from_rot(px, y - 1)
                             if (ux == 0 or ux == vgrid.C - 1 or
                                     uy == 0 or uy == vgrid.R - 1):
