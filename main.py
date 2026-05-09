@@ -6,7 +6,10 @@ import matplotlib.pyplot as plt
 
 from improved_astar import (improved_astar, path_length, count_inflection_nodes,
                             total_turning_angle, report_filled_cells)
-from grids import ENVIRONMENTS
+                            
+# YENI IMPORT: Artik ENVIRONMENTS yerine dinamik uretici fonksiyonu aliyoruz
+from grids import RAW_GRIDS, get_episode_config
+
 from visualization import (draw_static_result, static_legend_handles, HybridFrameRenderer)
 from hybrid_q_astar import (QLearningAgent, RaycastAgentEnv, train_on_env, run_episode)
 
@@ -17,10 +20,12 @@ def run_astar():
     output_dir = "output_improved_astar"
     os.makedirs(output_dir, exist_ok=True)
 
-    for env_name, env_data in ENVIRONMENTS.items():
+    for env_name in RAW_GRIDS.keys():
         print(f"\n====================================================")
         print(f"Running Improved A* on {env_name} map…")
 
+        # Test icin rastgele ama TEK ve SABIT bir harita uret (is_test=True)
+        env_data = get_episode_config(env_name, episode=0, is_test=True)
         grid = env_data["grid"]
         start = env_data["start"]
         goal = env_data["goal"]
@@ -42,7 +47,7 @@ def run_astar():
         grid_copy = [row[:] for row in grid]
         filled = report_filled_cells(grid_copy, grid_used)
         
-        print("\nU-trap filled cells (original 0 → used 1):")
+        print("\nU-trap filled cells (original 0 -> used 1):")
         if filled:
             for x, y in filled:
                 print(f"  ({x}, {y})")
@@ -89,7 +94,7 @@ def run_astar():
         plt.tight_layout(rect=[0, 0, 0.75, 1])
         plt.savefig(out, dpi=150, bbox_inches='tight')
         plt.close(fig)
-        print(f"Figure saved → {out}")
+        print(f"Figure saved -> {out}")
 
 # ---------------------------------------------------------------------------
 # Hibrit Q-Learning + A*
@@ -98,7 +103,8 @@ def run_hybrid(total_episodes=3000, eval_max_steps=500, gif_fps=6):
     output_dir = "output_hybrid"
     os.makedirs(output_dir, exist_ok=True)
 
-    n_envs = len(ENVIRONMENTS)
+    haritalar = list(RAW_GRIDS.keys())
+    n_envs = len(haritalar)
     eps_per_env = max(1, total_episodes // n_envs)
 
     print(f"\n=== Hybrid Q-A* training ===")
@@ -107,35 +113,68 @@ def run_hybrid(total_episodes=3000, eval_max_steps=500, gif_fps=6):
     print(f"Episodes per environment: {eps_per_env}\n")
 
     agent = QLearningAgent()
-    envs = {}
-    astar_summaries = {}
+    
+    # Test (Evaluation) asamasi icin kaydedilecek ortam degiskenleri
+    eval_envs = {}
+    eval_astar_summaries = {}
+    eval_specs = {}
 
     train_t0 = time.time()
     
-    for env_name, env_spec in ENVIRONMENTS.items():
+    for env_name in haritalar:
         print(f"  Training on {env_name} ({eps_per_env} episodes)…")
+        verbose_freq = max(eps_per_env // 4, 10)
         
-        grid = env_spec['grid']
-        start = env_spec['start']
-        goal = env_spec['goal']
-        dyn_obs = env_spec.get('dynamic_obstacles', [])
-        
-        astar_result = improved_astar(grid, start, goal)
-        ast_dict = {
-            'raw_path': astar_result[0],
-            'final_path': astar_result[1],
-            'open_log': astar_result[2],
-            'closed_log': astar_result[3],
-            'grid_used': astar_result[4]
+        for ep in range(eps_per_env):
+            # 1. Her bolumde (episode) o harita icin yeni rastgele konfigurasyon uret
+            config = get_episode_config(env_name, episode=ep, is_test=False)
+            
+            # 2. A* ile rotayi yeni pozisyonlara gore bul
+            astar_result = improved_astar(config['grid'], config['start'], config['goal'])
+            ast_dict = {
+                'raw_path': astar_result[0],
+                'final_path': astar_result[1],
+                'open_log': astar_result[2],
+                'closed_log': astar_result[3],
+                'grid_used': astar_result[4]
+            }
+            
+            # 3. Ortami guncel harita ve rotayla baslat
+            env = RaycastAgentEnv(
+                grid_static=config['grid'],
+                start=config['start'],
+                goal=config['goal'],
+                astar_data=ast_dict,
+                dyn_specs=config['dynamic_obstacles']
+            )
+            
+            # 4. Ajanı bu bölüm icin eğit
+            train_on_env(agent, env, episodes=1, max_steps=300, verbose_every=0)
+            
+            if (ep + 1) % verbose_freq == 0:
+                print(f"    ep {ep+1}/{eps_per_env}  eps={agent.epsilon:.3f}  |Q|={len(agent.q_table)}")
+
+        # Egitim tamamlandi. Test ve GIF uretimi icin eval haritasi olustur
+        eval_config = get_episode_config(env_name, episode=0, is_test=True)
+        eval_astar = improved_astar(eval_config['grid'], eval_config['start'], eval_config['goal'])
+        eval_ast_dict = {
+            'raw_path': eval_astar[0],
+            'final_path': eval_astar[1],
+            'open_log': eval_astar[2],
+            'closed_log': eval_astar[3],
+            'grid_used': eval_astar[4]
         }
+        eval_env = RaycastAgentEnv(
+            grid_static=eval_config['grid'],
+            start=eval_config['start'],
+            goal=eval_config['goal'],
+            astar_data=eval_ast_dict,
+            dyn_specs=eval_config['dynamic_obstacles']
+        )
         
-        env = RaycastAgentEnv(grid, start, goal, ast_dict, dyn_obs)
-        
-        envs[env_name] = env
-        astar_summaries[env_name] = ast_dict
-        
-        verbose_freq = max(eps_per_env // 3, 100)
-        train_on_env(agent, env, episodes=eps_per_env, max_steps=300, verbose_every=verbose_freq)
+        eval_envs[env_name] = eval_env
+        eval_astar_summaries[env_name] = eval_ast_dict
+        eval_specs[env_name] = eval_config
 
     train_dur = time.time() - train_t0
     print(f"\nTotal training time: {train_dur:.1f}s")
@@ -143,7 +182,7 @@ def run_hybrid(total_episodes=3000, eval_max_steps=500, gif_fps=6):
     
     agent.save(os.path.join(output_dir, "q_table.pkl"))
 
-    print("\n=== Evaluation (one episode per env, gif rendered) ===")
+    print("\n=== Evaluation (one test episode per env, gif rendered) ===")
     
     summary_lines = [
         "Hybrid Q-Astar: Evaluation Summary\n",
@@ -153,9 +192,9 @@ def run_hybrid(total_episodes=3000, eval_max_steps=500, gif_fps=6):
         f"Q-table size             : {len(agent.q_table)}\n\n"
     ]
 
-    for env_name, env in envs.items():
-        env_spec = ENVIRONMENTS[env_name]
-        ast = astar_summaries[env_name]
+    for env_name, env in eval_envs.items():
+        env_spec = eval_specs[env_name]
+        ast = eval_astar_summaries[env_name]
         
         env.reset()
         
@@ -171,7 +210,8 @@ def run_hybrid(total_episodes=3000, eval_max_steps=500, gif_fps=6):
             env_name=env_name,
         )
 
-        res = run_episode(agent, env, max_steps=eval_max_steps, frame_renderer=renderer, episode_label="eval")
+        log_path = os.path.join(output_dir, f"log_{env_name}.txt")
+        res = run_episode(agent, env, max_steps=eval_max_steps, frame_renderer=renderer, episode_label=env_name, log_path=log_path)
         
         gif_path = os.path.join(output_dir, f"hybrid_{env_name}.gif")
         renderer.save_gif(gif_path, fps=gif_fps)
@@ -180,7 +220,7 @@ def run_hybrid(total_episodes=3000, eval_max_steps=500, gif_fps=6):
         
         line_part1 = f"{env_name:<22}  steps={res['steps']:3d}  reward={res['reward']:+5d}  success={success_str:<3}  final_pos={res['final_pos']}"
         line_part2 = f"{'':22}  A*: closed={len(ast['closed_log'])} final_nodes={len(ast['final_path'])} final_len={path_length(ast['final_path']):.3f}"
-        line_part3 = f"{'':22}  GIF → {gif_path}\n"
+        line_part3 = f"{'':22}  GIF -> {gif_path}\n"
         
         full_line = f"{line_part1}\n{line_part2}\n{line_part3}"
         print(full_line)
@@ -190,11 +230,11 @@ def run_hybrid(total_episodes=3000, eval_max_steps=500, gif_fps=6):
     with open(summary_path, 'w') as f:
         f.writelines(summary_lines)
         
-    print(f"\nSummary saved → {summary_path}")
+    print(f"\nSummary saved -> {summary_path}")
 
 if __name__ == '__main__':
-    print("Improved A* Statik Harita Testleri Basliyor...\n")
-    run_astar()
+   # print("Improved A* Statik Harita Testleri Basliyor...\n")
+    #run_astar()
     
     print("\nHibrit (Q-Learning + A*) Egitimi Basliyor...\n")
     run_hybrid(total_episodes=3000, eval_max_steps=500, gif_fps=6)
