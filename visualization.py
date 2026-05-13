@@ -220,7 +220,7 @@ class HybridFrameRenderer:
 
         ax.set_title(
             f'Hybrid Q-A* — {self.env_name}\n'
-            f'Step {step}  |  Reward {total_reward:+d}',
+            f'Step {step}  |  Reward {total_reward:+.2f}',
             fontsize=9, pad=4
         )
         # Mod etiketi: figurun ustunde renkli bir bant
