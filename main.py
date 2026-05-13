@@ -15,7 +15,8 @@ from improved_astar import (improved_astar, path_length)
 from grids import RAW_GRIDS, get_training_schedule, get_episode_config
 from visualization import HybridFrameRenderer
 
-from hybrid_d3qn_astar import (D3QNAgent, RaycastAgentEnv, train_on_env,
+from agent_env import RaycastAgentEnv
+from hybrid_d3qn_astar import (D3QNAgent, train_on_env,
                                run_episode, DEVICE, set_seed)
 
 # ---------------------------------------------------------------------------
