@@ -1,0 +1,64 @@
+Hybrid D3QN-Astar: Evaluation Summary
+Test Mode Active         : False
+Total test environments  : 30
+Final epsilon            : 0.050
+
+--- Evaluation Results ---
+--- Training Progress Logs ---
+    Step 500/12000 | Env: 50x50_basit     | eps=0.960 | loss=81.8167 | buf=1745
+    Step 1000/12000 | Env: 50x50_karmasik  | eps=0.920 | loss=97.1842 | buf=3382
+    Step 1500/12000 | Env: 50x50_karmasik  | eps=0.880 | loss=108.7855 | buf=5099
+    Step 2000/12000 | Env: 30x30_basit     | eps=0.840 | loss=82.4217 | buf=6870
+    Step 2500/12000 | Env: 30x30_basit     | eps=0.800 | loss=138.7128 | buf=8594
+    Step 3000/12000 | Env: 30x30_karmasik  | eps=0.760 | loss=178.9910 | buf=10723
+    Step 3500/12000 | Env: 30x30_basit     | eps=0.720 | loss=124.8139 | buf=12679
+    Step 4000/12000 | Env: 30x30_karmasik  | eps=0.680 | loss=116.5432 | buf=14602
+    Step 4500/12000 | Env: 30x30_karmasik  | eps=0.640 | loss=154.0719 | buf=16693
+    Step 5000/12000 | Env: 10x10_karmasik  | eps=0.600 | loss=163.9693 | buf=18514
+    Step 5500/12000 | Env: 10x10_karmasik  | eps=0.560 | loss=203.0169 | buf=20568
+    Step 6000/12000 | Env: 50x50_karmasik  | eps=0.520 | loss=199.7667 | buf=22647
+    Step 6500/12000 | Env: 30x30_karmasik  | eps=0.480 | loss=93.1496 | buf=24941
+    Step 7000/12000 | Env: 50x50_karmasik  | eps=0.440 | loss=175.5954 | buf=25000
+    Step 7500/12000 | Env: 50x50_basit     | eps=0.400 | loss=99.9215 | buf=25000
+    Step 8000/12000 | Env: 10x10_karmasik  | eps=0.360 | loss=122.5267 | buf=25000
+    Step 8500/12000 | Env: 50x50_karmasik  | eps=0.320 | loss=146.7114 | buf=25000
+    Step 9000/12000 | Env: 50x50_karmasik  | eps=0.280 | loss=126.6666 | buf=25000
+    Step 9500/12000 | Env: 50x50_karmasik  | eps=0.240 | loss=101.5048 | buf=25000
+    Step 10000/12000 | Env: 30x30_karmasik  | eps=0.200 | loss=138.6359 | buf=25000
+    Step 10500/12000 | Env: 50x50_karmasik  | eps=0.160 | loss=183.7721 | buf=25000
+    Step 11000/12000 | Env: 30x30_karmasik  | eps=0.120 | loss=149.5001 | buf=25000
+    Step 11500/12000 | Env: 50x50_karmasik  | eps=0.080 | loss=108.5283 | buf=25000
+    Step 12000/12000 | Env: 50x50_karmasik  | eps=0.050 | loss=71.2769 | buf=25000
+
+10x10_basit_ep0           steps=  7  reward= +685.2  success=YES
+10x10_karmasik_ep0        steps=400  reward= -322.5  success=NO 
+30x30_basit_ep0           steps= 24  reward=+1088.5  success=YES
+30x30_karmasik_ep0        steps= 13  reward= -167.1  success=NO 
+50x50_basit_ep0           steps= 20  reward= -132.0  success=NO 
+50x50_karmasik_ep0        steps= 36  reward=+1830.6  success=YES
+10x10_basit_ep1           steps=  2  reward= -473.1  success=NO 
+10x10_karmasik_ep1        steps=  6  reward= +673.1  success=YES
+30x30_basit_ep1           steps= 22  reward=+1174.9  success=YES
+30x30_karmasik_ep1        steps= 15  reward= +979.0  success=YES
+50x50_basit_ep1           steps= 26  reward=+1286.6  success=YES
+50x50_karmasik_ep1        steps= 28  reward=+1256.3  success=YES
+10x10_basit_ep2           steps=  4  reward= +559.5  success=YES
+10x10_karmasik_ep2        steps=  4  reward= +568.7  success=YES
+30x30_basit_ep2           steps= 35  reward= +150.7  success=NO 
+30x30_karmasik_ep2        steps= 15  reward= +967.7  success=YES
+50x50_basit_ep2           steps= 34  reward=+1423.9  success=YES
+50x50_karmasik_ep2        steps= 35  reward=+1541.1  success=YES
+10x10_basit_ep3           steps=  5  reward= +567.7  success=YES
+10x10_karmasik_ep3        steps=  4  reward= +577.0  success=YES
+30x30_basit_ep3           steps= 14  reward= +834.0  success=YES
+30x30_karmasik_ep3        steps= 16  reward=+1112.4  success=YES
+50x50_basit_ep3           steps= 24  reward=+1132.2  success=YES
+50x50_karmasik_ep3        steps= 28  reward= +153.6  success=NO 
+10x10_basit_ep4           steps=  4  reward= +559.5  success=YES
+10x10_karmasik_ep4        steps=  5  reward= +645.8  success=YES
+30x30_basit_ep4           steps= 25  reward=+1165.8  success=YES
+30x30_karmasik_ep4        steps= 22  reward=+1057.3  success=YES
+50x50_basit_ep4           steps= 35  reward=+1133.8  success=YES
+50x50_karmasik_ep4        steps= 43  reward=+1526.9  success=YES
+
+Overall Success: 24/30

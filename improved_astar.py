@@ -107,6 +107,7 @@ class VirtualGrid:
 #----------------------------------------------------------------------------
 def fill_u_traps(grid, ox, oy, start, goal, curr):
     any_filled = False
+    global_cells_to_fill = set() # Tum yonlerdeki hucreleri tek bir havuzda topla
 
     for rot in range(4):
         vgrid = VirtualGrid(grid, rot)
@@ -142,10 +143,10 @@ def fill_u_traps(grid, ox, oy, start, goal, curr):
                     # Filtre 1 - Sınır duvar:
                     lx, ly = vgrid.from_rot(px - 1, py)
                     bx, by = vgrid.from_rot(px,     py + 1)
-                    if (lx == 0 or lx == vgrid.C - 1 or
-                            ly == 0 or ly == vgrid.R - 1 or
-                            bx == 0 or bx == vgrid.C - 1 or
-                            by == 0 or by == vgrid.R - 1):
+                    if (lx <= 0 or lx >= vgrid.C - 1 or
+                        ly <= 0 or ly >= vgrid.R - 1 or
+                        bx <= 0 or bx >= vgrid.C - 1 or
+                        by <= 0 or by >= vgrid.R - 1):
                         px -= 1; continue
 
                     p1 = (px, py)
@@ -159,8 +160,8 @@ def fill_u_traps(grid, ox, oy, start, goal, curr):
                             if vgrid.get(px - 1, y - 1) != 1:
                                 break  # Kose boslugu varsa tuzak tam kapali degildir
                             ux, uy = vgrid.from_rot(px, y - 1)
-                            if (ux == 0 or ux == vgrid.C - 1 or
-                                    uy == 0 or uy == vgrid.R - 1):
+                            if (ux <= 0 or ux >= vgrid.C - 1 or
+                                uy <= 0 or uy >= vgrid.R - 1):
                                 break
                             p2 = (px, y); break
 
@@ -195,49 +196,40 @@ def fill_u_traps(grid, ox, oy, start, goal, curr):
 
                     # ------ Step 4: Pd katmanlarını doldur ------
                     offset = 0
+                    cells_to_fill = []
+                    abort_trap = False
+
                     while px + offset < c:
                         pd  = [(px + offset,     y) for y in range(y_min, y_max + 1)]
                         pd1 = [(px + offset + 1, y) for y in range(y_min, y_max + 1)
                                if px + offset + 1 < c]
                         if not pd: break
 
-                        # Fig.5e: Pd'de P3/P4 → Pd doldur ve dur
-                        if set(pd) & p34_set:
-                            for cx, cy in pd:
-                                if vgrid.get(cx, cy) == 0:
-                                    vgrid.set(cx, cy, 1); any_filled = True
+                        if (set(pd) & sg_set) or (set(pd1) & sg_set):
+                            abort_trap = True
                             break
 
-                        # Fig.5g: Pd'de start/goal → dur
-                        if set(pd) & sg_set:
+                        if set(pd) & p34_set:
+                            cells_to_fill.extend(pd)
                             break
 
                         # Fig.5f: Pd1'de engel → Pd doldur ve dur
                         if any(vgrid.get(cx, cy) == 1 for cx, cy in pd1):
-                            for cx, cy in pd:
-                                if vgrid.get(cx, cy) == 0:
-                                    vgrid.set(cx, cy, 1); any_filled = True
+                            cells_to_fill.extend(pd)
                             break
 
-                        # Fig.5g: Pd1'de start/goal → Pd doldur ve dur
-                        if set(pd1) & sg_set:
-                            for cx, cy in pd:
-                                if vgrid.get(cx, cy) == 0:
-                                    vgrid.set(cx, cy, 1); any_filled = True
-                            break
-
-                        # Fig.5e: Pd1'de P3/P4 → Pd+Pd1 doldur ve dur
                         if set(pd1) & p34_set:
-                            for cx, cy in pd + pd1:
-                                if vgrid.get(cx, cy) == 0:
-                                    vgrid.set(cx, cy, 1); any_filled = True
+                            cells_to_fill.extend(pd)
+                            cells_to_fill.extend(pd1)
                             break
 
-                        # Fig.5d: Hiçbiri yok → Pd doldur, ilerle
-                        for cx, cy in pd:
-                            if vgrid.get(cx, cy) == 0:
-                                vgrid.set(cx, cy, 1); any_filled = True
+                        cells_to_fill.extend(pd)
                         offset += 1
+                        
+                    if not abort_trap:
+                        for cx, cy in cells_to_fill:
+                            orig_x, orig_y = vgrid.from_rot(cx, cy)
+                            global_cells_to_fill.add((orig_x, orig_y))
 
                     # Bu rotasyon için P1 işlendi; aynı rotasyonda başka
                     # py denemiyoruz (zaten dolgu yapıldı veya bilinçli durduk).
@@ -245,6 +237,11 @@ def fill_u_traps(grid, ox, oy, start, goal, curr):
                     break
 
                 px -= 1  # P1 yok, sola
+    # Butun rotasyonlar bittikten sonra haritayi tek seferde doldur
+    for gx, gy in global_cells_to_fill:
+        if grid[gy][gx] == 0:
+            grid[gy][gx] = 1
+            any_filled = True
 
     return any_filled
 
