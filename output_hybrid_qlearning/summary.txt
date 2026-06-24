@@ -1,0 +1,38 @@
+Hybrid Tabular Q-Learning: Evaluation Summary
+Test Mode Active         : False
+Total test environments  : 30
+Final Table Size         : 38395
+
+--- Evaluation Results ---
+10x10_basit_ep0           steps=  1  reward= -300.0  success=NO 
+10x10_karmasik_ep0        steps=  1  reward= -300.0  success=NO 
+30x30_basit_ep0           steps= 13  reward= -386.9  success=NO 
+30x30_karmasik_ep0        steps= 11  reward= -115.6  success=NO 
+50x50_basit_ep0           steps= 11  reward=  -40.9  success=NO 
+50x50_karmasik_ep0        steps= 36  reward=+1830.6  success=YES
+10x10_basit_ep1           steps= 13  reward= -456.7  success=NO 
+10x10_karmasik_ep1        steps=  2  reward= -272.7  success=NO 
+30x30_basit_ep1           steps= 24  reward= +356.6  success=NO 
+30x30_karmasik_ep1        steps= 15  reward= +979.0  success=YES
+50x50_basit_ep1           steps= 26  reward=+1286.6  success=YES
+50x50_karmasik_ep1        steps= 28  reward=+1256.3  success=YES
+10x10_basit_ep2           steps=  4  reward= +559.5  success=YES
+10x10_karmasik_ep2        steps=  4  reward= +568.7  success=YES
+30x30_basit_ep2           steps=  7  reward= -387.8  success=NO 
+30x30_karmasik_ep2        steps= 13  reward= +134.7  success=NO 
+50x50_basit_ep2           steps= 38  reward=+1436.3  success=YES
+50x50_karmasik_ep2        steps= 35  reward=+1541.1  success=YES
+10x10_basit_ep3           steps= 11  reward= +570.0  success=YES
+10x10_karmasik_ep3        steps=  4  reward= +577.0  success=YES
+30x30_basit_ep3           steps= 14  reward= +834.0  success=YES
+30x30_karmasik_ep3        steps= 16  reward=+1112.4  success=YES
+50x50_basit_ep3           steps= 20  reward= -122.5  success=NO 
+50x50_karmasik_ep3        steps= 13  reward= +160.2  success=NO 
+10x10_basit_ep4           steps=  4  reward= +559.5  success=YES
+10x10_karmasik_ep4        steps=  5  reward= +645.8  success=YES
+30x30_basit_ep4           steps= 27  reward=+1163.8  success=YES
+30x30_karmasik_ep4        steps= 24  reward=+1055.3  success=YES
+50x50_basit_ep4           steps= 36  reward=+1136.3  success=YES
+50x50_karmasik_ep4        steps= 15  reward= +170.0  success=NO 
+
+Overall Success: 17/30
